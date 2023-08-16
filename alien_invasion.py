@@ -1,4 +1,5 @@
 import sys
+import time
 from time import sleep
 import pygame
 from setting import Settings
@@ -24,6 +25,7 @@ class AlienInvasion:
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
         self.play_button = Button(self, "Play")
+        self.pause_button = Button(self, "Pause")
 
     def run_game(self):
         # Запуск основного цикла игры
@@ -31,9 +33,10 @@ class AlienInvasion:
             # отслеживание клавиатуры и мыши
             self._check_events()
             if self.stats.game_active:
-                self.ship.update()
-                self._update_bullets()
-                self._update_aliens()
+                if not self.stats.pause:
+                    self.ship.update()
+                    self._update_bullets()
+                    self._update_aliens()
             self._update_screen()
 
     def _check_events(self):
@@ -62,6 +65,8 @@ class AlienInvasion:
             self.ship.moving_down = True
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+        elif event.key == pygame.K_p:
+            self.stats.pause = not self.stats.pause
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
@@ -173,13 +178,18 @@ class AlienInvasion:
         # обновляет изображение на экране и отоброжает новый экран
         self.screen.blit(self.settings.bg_image, (0, 0))
         self.ship.blitme()
-        for bullet in self.bullets.sprites():
-            bullet.draw_bullet()
+        if not self.stats.pause:
+            for bullet in self.bullets.sprites():
+                bullet.draw_bullet()
         self.aliens.draw(self.screen)
         if not self.stats.game_active:
             self.play_button.draw_button()
+        if not self.stats.pause:
+            pygame.display.flip()
+        if self.stats.pause:
+            self.pause_button.draw_button()
+            pygame.display.update()
 
-        pygame.display.flip()
 
 
 if __name__ == "__main__":
