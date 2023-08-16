@@ -5,7 +5,7 @@ class GameStats():
         #инициализирует статистику
         self.settings = ai_game.settings
         self.reset_stats()
-        self.game_active = True
+        self.game_active = False
 
     def reset_stats(self):
         #Инициализирует статистику, которая меняется в ходе игры
