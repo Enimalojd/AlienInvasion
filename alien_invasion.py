@@ -1,5 +1,4 @@
 import sys
-import time
 from time import sleep
 import pygame
 from setting import Settings
@@ -189,7 +188,6 @@ class AlienInvasion:
         if self.stats.pause:
             self.pause_button.draw_button()
             pygame.display.update()
-
 
 
 if __name__ == "__main__":
