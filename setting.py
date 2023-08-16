@@ -3,8 +3,9 @@ class Settings():
     def __init__(self):
         self.screen_width = 1200
         self.screen_height = 800
-        self.bg_color = pygame.image.load("images/bg.png")
-        self.bg_color = pygame.transform.scale(self.bg_color, (self.screen_width, self.screen_height))
+        self.bg_colors = (230, 230, 230)
+        self.bg_image = pygame.image.load("images/bg.png")
+        self.bg_color = pygame.transform.scale(self.bg_image, (self.screen_width, self.screen_height))
         self.ship_speed = 0.7
         self.ship_limit = 3
         #поведение снаряда

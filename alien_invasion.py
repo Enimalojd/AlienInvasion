@@ -6,6 +6,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
+from button import Button
 
 
 class AlienInvasion:
@@ -22,19 +23,18 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
-
+        self.play_button = Button(self, "Play")
 
     def run_game(self):
         # Запуск основного цикла игры
         while True:
             # отслеживание клавиатуры и мыши
             self._check_events()
-
             if self.stats.game_active:
                 self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
-                self._update_screen()
+            self._update_screen()
 
     def _check_events(self):
         # обрабатывает нажатия клавиш и события мыши
@@ -45,6 +45,9 @@ class AlienInvasion:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
 
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
@@ -69,6 +72,18 @@ class AlienInvasion:
             self.ship.moving_up = False
         elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
             self.ship.moving_down = False
+
+    def _check_play_button(self, mouse_pos):
+        # запускает игру при нажатии кнопки Play
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            self.stats.reset_stats()
+            self.stats.game_active = True
+            self.aliens.empty()
+            self.bullets.empty()
+            self._create_fleet()
+            self.ship.center_ship()
+            pygame.mouse.set_visible(False)
 
     def _create_fleet(self):
         # создание флота вторжения
@@ -95,30 +110,29 @@ class AlienInvasion:
 
     def _update_aliens(self):
         self._check_fleet_directions()
-        #обновляет позиции пришельцев на экране
+        # обновляет позиции пришельцев на экране
         self.aliens.update()
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
         self._check_alies_bottom()
 
-
     def _ship_hit(self):
-        #обрабатывает столкновение корабля с пришельцем
+        # обрабатывает столкновение корабля с пришельцем
         if self.stats.ship_left > 0:
             self.stats.ship_left -= 1
-            #очистка экрана от пришельцев и снарядов
+            # очистка экрана от пришельцев и снарядов
             self.aliens.empty()
             self.bullets.empty()
-            #создание нового флота и корабля игрока
+            # создание нового флота и корабля игрока
             self._create_fleet()
             self.ship.center_ship()
-            #пауза
+            # пауза
             sleep(0.5)
         else:
             self.stats.game_active = False
 
     def _check_alies_bottom(self):
-        #проверяет добрались ли пришельцы к нижнему краю экрана
+        # проверяет добрались ли пришельцы к нижнему краю экрана
         screen_rect = self.screen.get_rect()
         for alien in self.aliens.sprites():
             if alien.rect.bottom >= screen_rect.bottom:
@@ -126,14 +140,14 @@ class AlienInvasion:
                 break
 
     def _check_fleet_directions(self):
-        #реагирует на достижение пришельцем края экрана
+        # реагирует на достижение пришельцем края экрана
         for alien in self.aliens.sprites():
             if alien.check_edges():
                 self._change_fleet_direction()
                 break
 
     def _change_fleet_direction(self):
-        #опускает весь флот и меняет направление
+        # опускает весь флот и меняет направление
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
@@ -149,20 +163,21 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-        #при обнаружении попадания удалить снаряд и пришельца
+        # при обнаружении попадания удалить снаряд и пришельца
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
 
-
     def _update_screen(self):
         # обновляет изображение на экране и отоброжает новый экран
-        self.screen.blit(self.settings.bg_color, (0, 0))
+        self.screen.blit(self.settings.bg_image, (0, 0))
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        if not self.stats.game_active:
+            self.play_button.draw_button()
 
         pygame.display.flip()
 
