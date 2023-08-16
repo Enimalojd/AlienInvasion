@@ -3,6 +3,7 @@ import pygame
 from setting import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     # Класс для управления ресурсами и поведением игры
@@ -15,6 +16,8 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+        self._create_fleet()
 
 
 
@@ -28,10 +31,7 @@ class AlienInvasion:
             # отслеживание клавиатуры и мыши
             self._check_events()
             self.ship.update()
-            self.bullets.update()
-            for bullet in self.bullets.copy():
-                if bullet.rect.bottom <= 0:
-                    self.bullets.remove(bullet)
+            self._update_bullets()
             self._update_screen()
 
 
@@ -71,10 +71,24 @@ class AlienInvasion:
             self.ship.moving_down = False
 
 
+    def _create_fleet(self):
+        #создание флота вторжения
+        alien = Alien(self)
+        self.aliens.add(alien)
+
+
+
     def _fire_bullet(self):
         #создание нового снаряда на экране
         new_bullet = Bullet(self)
         self.bullets.add(new_bullet)
+
+    def _update_bullets(self):
+        #обновляет позиции снарядов и удаляет снаряды, котоыре вышли за предел экрана
+        self.bullets.update()
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _update_screen(self):
         #обновляет изображение на экране и отоброжает новый экран
@@ -82,6 +96,8 @@ class AlienInvasion:
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+        self.aliens.draw(self.screen)
+
         pygame.display.flip()
 
 
