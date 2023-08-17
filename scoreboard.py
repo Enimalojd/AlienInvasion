@@ -60,6 +60,7 @@ class Scoreboard():
             self.ships.add(ship)
 
     def prep_gameover(self):
+            #вывод GAME OVER
             self.gameover_image = self.font_gameover.render(f"GAME OVER", True, self.text_color, None)
             self.gameover_rect = self.gameover_image.get_rect()
             self.gameover_rect.centerx = self.screen.get_rect().centerx
