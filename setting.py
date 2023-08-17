@@ -3,7 +3,7 @@ class Settings():
     def __init__(self):
         self.screen_width = 1200
         self.screen_height = 800
-        self.bg_colors = (230, 230, 230)
+        self.bg_colors = (0, 0, 0)
         self.bg_image = pygame.image.load("images/bg.png")
         self.bg_color = pygame.transform.scale(self.bg_image, (self.screen_width, self.screen_height))
        # self.ship_speed = 0.7
@@ -29,10 +29,13 @@ class Settings():
         self.alien_speed = 0.3
         self.bullet_speed = 1
         self.fleet_direction = 1  # 1 вправо, -1 влево
+        #ценность пришельца
+        self.alien_points = 50
 
     def increase_speed(self):
         #увеличивает настройки скорости
         self.ship_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
         self.bullet_speed += self.speedup_scale
+        self.alien_points += 10
 

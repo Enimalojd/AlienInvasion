@@ -7,6 +7,7 @@ from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion:
@@ -25,6 +26,7 @@ class AlienInvasion:
         self._create_fleet()
         self.play_button = Button(self, "Play")
         self.pause_button = Button(self, "Pause")
+        self.sb = Scoreboard(self)
 
     def run_game(self):
         # Запуск основного цикла игры
@@ -66,6 +68,10 @@ class AlienInvasion:
             self._fire_bullet()
         elif event.key == pygame.K_p:
             self.stats.pause = not self.stats.pause
+            if self.stats.pause:
+                pygame.mouse.set_visible(True)
+            else:
+                pygame.mouse.set_visible(False)
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
@@ -174,10 +180,12 @@ class AlienInvasion:
         # при обнаружении попадания удалить снаряд и пришельца
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
         if not self.aliens:
-            # Destroy existing bullets and create new fleet.
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+        if collisions:
+            self.stats.score += self.settings.alien_points
+            self.sb.prep_score()
 
     def _update_screen(self):
         # обновляет изображение на экране и отоброжает новый экран
@@ -187,6 +195,7 @@ class AlienInvasion:
             for bullet in self.bullets.sprites():
                 bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        self.sb.show_score()
         if not self.stats.game_active:
             self.play_button.draw_button()
         if not self.stats.pause:
