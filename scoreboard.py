@@ -17,11 +17,12 @@ class Scoreboard():
         #настройки шрифта
         self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
+        self.font_gameover = pygame.font.SysFont(None, 100)
         #вывод объектов и их отображение
         self.prep_score()
         self.prep_level()
         self.prep_ships()
-
+        self.prep_gameover()
 
     def prep_score(self):
         #преобразует текущий счёт в графическое изображение
@@ -57,4 +58,16 @@ class Scoreboard():
             ship.rect.x = 10 + ship_number * (ship.rect.width * 1.3)
             ship.rect.y = 10
             self.ships.add(ship)
+
+    def prep_gameover(self):
+            self.gameover_image = self.font_gameover.render(f"GAME OVER", True, self.text_color, None)
+            self.gameover_rect = self.gameover_image.get_rect()
+            self.gameover_rect.centerx = self.screen.get_rect().centerx
+            self.gameover_rect.centery = self.screen.get_rect().centery - 50
+            self.screen.blit(self.gameover_image, self.gameover_rect)
+
+
+
+
+
 

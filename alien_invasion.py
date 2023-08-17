@@ -96,6 +96,7 @@ class AlienInvasion:
             self.ship.center_ship()
             self.sb.prep_level()
             self.sb.prep_ships()
+            self.sb.prep_gameover()
             pygame.mouse.set_visible(False)
 
     def _create_fleet(self):
@@ -205,6 +206,11 @@ class AlienInvasion:
         self.sb.show_score()
         if not self.stats.game_active:
             self.play_button.draw_button()
+            pygame.mouse.set_visible(True)
+        if not self.stats.game_active and self.stats.ship_left == 0:
+            self.sb.prep_gameover()
+            self.play_button.draw_button()
+            pygame.mouse.set_visible(True)
         if not self.stats.pause:
             pygame.display.flip()
         if self.stats.pause:
