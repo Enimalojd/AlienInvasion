@@ -94,6 +94,7 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.ship.center_ship()
+            self.sb.prep_level()
             pygame.mouse.set_visible(False)
 
     def _create_fleet(self):
@@ -169,7 +170,7 @@ class AlienInvasion:
         self.bullets.add(new_bullet)
 
     def _update_bullets(self):
-        # обновляет позиции снарядов и удаляет снаряды, котоыре вышли за предел экрана
+        # обновляет позиции снарядов и удаляет снаряды, которые вышли за предел экрана
         self.bullets.update()
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
@@ -183,8 +184,12 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+            #увиличение уровня на
+            self.stats.level += 1
+            self.sb.prep_level()
         if collisions:
-            self.stats.score += self.settings.alien_points
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
             self.sb.prep_score()
 
     def _update_screen(self):
