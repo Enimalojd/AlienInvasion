@@ -1,9 +1,11 @@
 import pygame
+from pygame.sprite import Sprite
 
 
-class Ship:
+class Ship(Sprite):
     # класс управления кораблём
     def __init__(self, ai_game):
+        super().__init__()
         # инициализирует корабль и задаёт его начальную форму
 
         self.screen = ai_game.screen

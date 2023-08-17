@@ -95,6 +95,7 @@ class AlienInvasion:
             self._create_fleet()
             self.ship.center_ship()
             self.sb.prep_level()
+            self.sb.prep_ships()
             pygame.mouse.set_visible(False)
 
     def _create_fleet(self):
@@ -132,6 +133,7 @@ class AlienInvasion:
         # обрабатывает столкновение корабля с пришельцем
         if self.stats.ship_left > 0:
             self.stats.ship_left -= 1
+            self.sb.prep_ships()
             # очистка экрана от пришельцев и снарядов
             self.aliens.empty()
             self.bullets.empty()
